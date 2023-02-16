@@ -91,25 +91,22 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-      # Initialize frontier to just the starting position
+     # Empezamos con una persona inicial
     start = Node(state=source, parent=None, action=None)
+
+    # Creamos una lista vacía de personas exploradas
+    explored = set()
+
+    # Creamos una cola (llamada "frontier") con la persona inicial
     frontier = QueueFrontier()
     frontier.add(start)
 
-    # Initialize an empty explored set
-    explored = set()
-
-    # Keep looping until solution found
-    while True:
-
-        # If nothing left in frontier, then no path
-        if frontier.empty():
-            return None
-
-        # Choose a node from the frontier
+    # Empezamos a buscar el camino
+    while frontier:
+        # Sacamos a una persona de la frontier
         node = frontier.remove()
 
-        # If node is the goal, then we have a solution
+        # Si la persona es la final, encontramos el camino
         if node.state == target:
             path = []
             while node.parent is not None:
@@ -118,14 +115,19 @@ def shortest_path(source, target):
             path.reverse()
             return path
 
-        # Mark node as explored
+        # Añadimos a la persona a la lista de explorados
         explored.add(node.state)
 
-        # Add neighbors to frontier
+        # Buscamos amigos de la persona
         for movie_id, person_id in neighbors_for_person(node.state):
-            if not frontier.contains_state(person_id) and person_id not in explored:
+            # Si la persona no ha sido explorada y no está en la frontier, la añadimos
+            if person_id not in explored and not frontier.contains_state(person_id):
                 child = Node(state=person_id, parent=node, action=movie_id)
                 frontier.add(child)
+
+    # Si no encontramos un camino, regresamos None
+    return None
+   
 
     # TODO
     raise NotImplementedError
